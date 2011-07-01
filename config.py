@@ -39,8 +39,6 @@ def configure(advanced):
     from supybot.questions import expect, anything, something, yn
     conf.registerPlugin('Irc2rss', True)
 
-
-
 Irc2rss = conf.registerPlugin('Irc2rss')
 
 conf.registerChannelValue(Irc2rss, 'basepath', registry.String("/tmp/Irc2rss", """Base path of the rss data"""))

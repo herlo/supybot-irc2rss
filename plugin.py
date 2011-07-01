@@ -57,6 +57,7 @@ class Irc2rss(callbacks.Plugin):
         self.rsstitle = self.registryValue('title') % {'user': self.nick}
         self.rsslink = self.registryValue('link') % {'user': self.nick}
         self.rssdesc = self.registryValue('description')
+        self.pubdate = datetime.datetime.now()
 
         f = open("%s/%s/rss.in" % (self.path, self.nick), 'r')
 
@@ -65,7 +66,7 @@ class Irc2rss(callbacks.Plugin):
             t, u, d, dt = line.split("|")
 #            time.sleep(2)
 
-            print "t: %s, u: %s, dt: %s, d: %s" % (t, u, dt, d)
+#            irc.reply("t: %s, u: %s, dt: %s, d: %s" % (t, u, dt, d))
             item = PyRSS2Gen.RSSItem(title = t, link = u, description = d, guid = PyRSS2Gen.Guid(u + dt), pubDate = dt)
             item_list.append(item)
 
@@ -74,27 +75,22 @@ class Irc2rss(callbacks.Plugin):
         rss = PyRSS2Gen.RSS2( title = self.rsstitle, link = self.rsslink, description = self.rssdesc, lastBuildDate = self.pubdate, items = item_list)        
         file("%s/%s/rss.xml" % (self.path, self.nick), 'w+').write(rss.to_xml())
 
-    def generateRss(self, irc, msg, args, text):
+    def genrss(self, irc, msg, args, text):
 
         self.nick = msg.nick
-        #self.path = conf.supybot.plugins.Irc2rss.basepath()
-        irc.reply("generating feed for: %s" % self.nick)
         self._generateFeed()
+        irc.reply("rss feed for '%s' generated" % self.nick)
 
-    generateRss = wrap(generateRss, [many('something')])
+    genrss = wrap(genrss, [optional('something')])
 
     def add2rss(self, irc, msg, args, text):
 
         self.nick = msg.nick
         dateformat = self.registryValue('dateFormat')
-        d = datetime.datetime.now()
-        self.pubdate = d.strftime(dateformat)
 
         if not os.path.exists(u"%s/%s/rss.in" % (self.path, self.nick)):
             if not os.path.isdir(u"%s/%s" % (self.path, nick)):
                 os.makedirs(u"%s/%s" % (self.path, self.nick), 0775)
-#            f = open("%s/%s/rss.in" % (self.path, nick), 'a')
-#            f.write("==%s|%s|%s|%s|==\n" % (self.rsstitle, nick, self.rsslink, self.rssdesc)) 
 
         f = open("%s/%s/rss.in" % (self.path, self.nick), 'a')
 
@@ -104,15 +100,13 @@ class Irc2rss(callbacks.Plugin):
 
         f.write("%s|%s|%s|%s\n" % (itemmessage, itemlink, itemdesc, self.pubdate))
 
-        irc.reply("message: %s" % itemmessage)
+        irc.reply("status '%s' added" % itemmessage)
 
         f.close()
 
-        irc.reply("generating feed for: %s" % self.nick)
         self._generateFeed()
 
     add2rss = wrap(add2rss, [many('something')])
-
 
 Class = Irc2rss
 
