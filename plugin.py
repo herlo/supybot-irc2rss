@@ -89,7 +89,7 @@ class Irc2rss(callbacks.Plugin):
         dateformat = self.registryValue('dateFormat')
 
         if not os.path.exists(u"%s/%s/rss.in" % (self.path, self.nick)):
-            if not os.path.isdir(u"%s/%s" % (self.path, nick)):
+            if not os.path.isdir(u"%s/%s" % (self.path, self.nick)):
                 os.makedirs(u"%s/%s" % (self.path, self.nick), 0775)
 
         f = open("%s/%s/rss.in" % (self.path, self.nick), 'a')
