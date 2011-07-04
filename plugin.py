@@ -86,6 +86,7 @@ class Irc2rss(callbacks.Plugin):
     def add2rss(self, irc, msg, args, text):
 
         self.nick = msg.nick
+        self.pubdate = datetime.datetime.now()
         dateformat = self.registryValue('dateFormat')
 
         if not os.path.exists(u"%s/%s/rss.in" % (self.path, self.nick)):
