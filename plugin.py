@@ -59,7 +59,7 @@ class Irc2rss(callbacks.Plugin):
         self.rssdesc = self.registryValue('description')
         self.pubdate = datetime.datetime.now()
 
-        f = open("%s/%s/rss.in" % (self.path, self.nick), 'r')
+        f = open("%s/%s.in" % (self.path, self.nick), 'r')
 
         item_list = []
         for line in f:
@@ -73,7 +73,7 @@ class Irc2rss(callbacks.Plugin):
         f.close()
  
         rss = PyRSS2Gen.RSS2( title = self.rsstitle, link = self.rsslink, description = self.rssdesc, lastBuildDate = self.pubdate, items = item_list)        
-        file("%s/%s/rss.xml" % (self.path, self.nick), 'w+').write(rss.to_xml())
+        file("%s/%s.xml" % (self.path, self.nick), 'w+').write(rss.to_xml())
 
     def genrss(self, irc, msg, args, text):
 
@@ -89,11 +89,11 @@ class Irc2rss(callbacks.Plugin):
         self.pubdate = datetime.datetime.now()
         dateformat = self.registryValue('dateFormat')
 
-        if not os.path.exists(u"%s/%s/rss.in" % (self.path, self.nick)):
-            if not os.path.isdir(u"%s/%s" % (self.path, self.nick)):
-                os.makedirs(u"%s/%s" % (self.path, self.nick), 0775)
+        if not os.path.exists(u"%s/%s.in" % (self.path, self.nick)):
+            if not os.path.isdir(u"%s" % (self.path)):
+                os.makedirs(u"%s" % (self.path), 0775)
 
-        f = open("%s/%s/rss.in" % (self.path, self.nick), 'a')
+        f = open("%s/%s.in" % (self.path, self.nick), 'a')
 
         itemmessage = string.join(text)
         itemlink = self.registryValue('link') % {'user': self.nick}
